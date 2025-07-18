@@ -1,10 +1,10 @@
 // src/lib/api.ts
-import { Product } from "@/types/product"
+import { Jns_Product } from "@/types/JnsProduct"
 
 const API_URL = "http://localhost:5000" // nanti backend jalan di sini
 
-export async function fetchProducts(): Promise<Product[]> {
-  const res = await fetch(`${API_URL}/api/produk`, {
+export async function fetchProducts(): Promise<Jns_Product[]> {
+  const res = await fetch(`${API_URL}/api/jns-produk`, {
     next: { revalidate: 0 }, // untuk fresh fetch (App Router)
   })
 

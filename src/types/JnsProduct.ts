@@ -1,5 +1,5 @@
 // src/types/product.ts
-export interface Product {
+export interface Jns_Product {
   id: number
   jns_produk: string 
   diskripsi: string

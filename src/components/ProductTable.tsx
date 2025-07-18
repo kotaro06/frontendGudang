@@ -1,8 +1,8 @@
 // src/components/ProductTable.tsx
-import { Product } from "@/types/product"
+import { Jns_Product } from "@/types/JnsProduct"
 
 type Props = {
-  products: Product[]
+  products: Jns_Product[]
 }
 
 export default function ProductTable({ products }: Props) {
