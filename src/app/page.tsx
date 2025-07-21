@@ -1,17 +1,19 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import ProductForm from "@/components/ProductForm"
-import ProductTable from "@/components/ProductTable"
-import { fetchProducts } from "@/lib/api"
-import { Jns_Product } from "@/types/JnsProduct"
+import React, { useState, useEffect } from "react";
+import ProductForm from "@/components/ProductForm";
+import ProductTable from "@/components/ProductTable";
+import { jenis_Product } from "@/types/jenisProduct";
+import { fetchJenisProducts } from "@/lib/api";
 
 export default function HomePage() {
-  const [Jns_Product, setProducts] = useState<Jns_Product[]>([])
+  const [products, setProducts] = useState<jenis_Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [editingProduct, setEditingProduct] = useState<jenis_Product | undefined>(undefined)
 
   const loadData = async () => {
-    const data = await fetchProducts()
+    setLoading(true)
+    const data = await fetchJenisProducts()
     setProducts(data)
     setLoading(false)
   }
@@ -22,12 +24,21 @@ export default function HomePage() {
 
   return (
     <main className="p-6 max-w-2xl mx-auto">
-      <ProductForm onSuccess={loadData} />
+       <ProductForm
+        editingProduct={editingProduct}
+        onSuccess={loadData}
+        onFinishEdit={() => setEditingProduct(undefined)}
+      />
       {loading ? (
         <p>Memuat data...</p>
       ) : (
-        <ProductTable products={Jns_Product} />
+        <ProductTable
+          products={products}
+          onEdit={setEditingProduct}
+          onDeleted={loadData}
+        />
       )}
+      
     </main>
   )
 }

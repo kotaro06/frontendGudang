@@ -1,38 +1,59 @@
-// src/components/ProductForm.tsx
-"use client"
+import React, { useState, useEffect } from "react";
+import { jenis_Product } from "@/types/jenisProduct"
+import {createJenisProduct, updateJenisProduct } from "@/lib/api"
 
-import { useState } from "react"
-import { createProduct } from "@/lib/api"
-
-export default function ProductForm({ onSuccess }: { onSuccess: () => void }) {
-  const [Jns_Product, setJnsProduk] = useState("")
-  const [diskripsi, setDiskripsi] = useState("")
+// Tambahkan prop `editingProduct` dan `onFinishEdit`
+export default function ProductForm({
+  editingProduct,
+  onSuccess,
+  onFinishEdit,
+}: {
+  editingProduct?: jenis_Product
+  onSuccess: () => void
+  onFinishEdit?: () => void
+}) {
+  const [jenis_Product,  setJenisProduk] = useState(editingProduct?.jns_produk || "")
+  
+  const [diskripsi, setDiskripsi] = useState(editingProduct?.diskripsi || "")
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (editingProduct) {
+      setJenisProduk(editingProduct.jns_produk)      
+      setDiskripsi(editingProduct.diskripsi)
+    }
+  }, [editingProduct])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     try {
-      await createProduct({ jns_produk: Jns_Product, diskripsi: diskripsi })
-      setJnsProduk("")
-      setDiskripsi("")      
-      onSuccess() // refresh tabel
-    } catch (error: unknown) {
-  console.error("Error detail:", error)
-  alert("Gagal menambah produk.")
-} finally {
+      if (editingProduct) {
+        await updateJenisProduct(editingProduct.id, { jns_produk: jenis_Product, diskripsi })
+        onFinishEdit?.()
+      } else {
+        await createJenisProduct({ jns_produk: jenis_Product, diskripsi })
+      }
+      setJenisProduk("")      
+      setDiskripsi("")
+      onSuccess()
+    } catch {
+      alert("Gagal simpan produk.")
+    } finally {
       setLoading(false)
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="mb-6 space-y-2">
-      <h2 className="font-semibold text-lg">Tambah Produk</h2>
+      <h2 className="font-semibold text-lg">
+        {editingProduct ? "Edit Produk" : "Tambah Produk"}
+      </h2>
       <input
         type="text"
         placeholder="Nama Produk"
-        value={Jns_Product}
-        onChange={(e) => setJnsProduk(e.target.value)}
+        value={jenis_Product}
+        onChange={(e) => setJenisProduk(e.target.value)}
         className="border p-2 w-full"
         required
       />
@@ -45,13 +66,24 @@ export default function ProductForm({ onSuccess }: { onSuccess: () => void }) {
         className="border p-2 w-full"
         required
       />
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        {loading ? "Menyimpan..." : "Tambah"}
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          {loading ? "Menyimpan..." : editingProduct ? "Update" : "Tambah"}
+        </button>
+        {editingProduct && (
+          <button
+            type="button"
+            onClick={onFinishEdit}
+            className="text-gray-600 underline"
+          >
+            Batal
+          </button>
+        )}
+      </div>
     </form>
   )
 }
