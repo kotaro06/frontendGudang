@@ -23,7 +23,7 @@ export async function createJenisProduct(product: Omit<jenis_Product, "id">) {
 }
 
 export async function updateJenisProduct(id: number, product: Omit<jenis_Product, "id">) {
-  const res = await fetch(`${API_URL}/api/produk/${id}`, {
+  const res = await fetch(`${API_URL}/api/jns-produk/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(product),
@@ -32,7 +32,7 @@ export async function updateJenisProduct(id: number, product: Omit<jenis_Product
 }
 
 export async function deleteJenisProduct(id: number) {
-  const res = await fetch(`${API_URL}/api/produk/${id}`, {
+  const res = await fetch(`${API_URL}/api/jns-produk/${id}`, {
     method: "DELETE",
   })
   if (!res.ok) throw new Error("Gagal hapus produk")
